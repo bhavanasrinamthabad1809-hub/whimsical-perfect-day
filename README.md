@@ -40,4 +40,6 @@ While making this project, I learned more about:
 
 My favorite part of this project is that I could combine coding with my own ideas and make a website that feels like something I would actually use.
 
+made with arpita with hack club program called sun beam banglore
+
 
