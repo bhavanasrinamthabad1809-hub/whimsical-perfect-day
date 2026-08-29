@@ -1,0 +1,1917 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Perfect Day</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sky-deep: #6fb7de;
+        --sky-mid: #a9d9ef;
+        --horizon: #ffefd6;
+        --paper: #fffbf2;
+        --paper-edge: #f2e8d3;
+        --ink: #2b3352;
+        --ink-soft: #5b6584;
+        --sun: #ffcc4d;
+        --sun-edge: #ffa93f;
+        --coral: #ff7f66;
+        --coral-ink: #8a3524;
+        --mint: #4fd1a5;
+        --mint-ink: #0f5c46;
+        --twine: #c9a66b;
+        --glitter-gold: #ffe9a8;
+        --glitter-pink: #ffc9e3;
+        --glitter-white: #ffffff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: "Quicksand", sans-serif;
+        color: var(--ink);
+        overflow-x: hidden;
+      }
+
+      /* ---------- sky background ---------- */
+      .sky {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background: linear-gradient(
+          180deg,
+          var(--sky-deep) 0%,
+          var(--sky-mid) 55%,
+          var(--horizon) 100%
+        );
+      }
+      .cloud {
+        position: fixed;
+        background: #fff;
+        border-radius: 50%;
+        opacity: 0.75;
+        filter: blur(0.5px);
+        z-index: -1;
+      }
+      .cloud::before,
+      .cloud::after {
+        content: "";
+        position: absolute;
+        background: #fff;
+        border-radius: 50%;
+      }
+      .c1 {
+        width: 140px;
+        height: 50px;
+        top: 8%;
+        left: -10%;
+        animation: drift 70s linear infinite;
+      }
+      .c1::before {
+        width: 70px;
+        height: 70px;
+        top: -30px;
+        left: 20px;
+      }
+      .c1::after {
+        width: 50px;
+        height: 50px;
+        top: -18px;
+        left: 70px;
+      }
+      .c2 {
+        width: 100px;
+        height: 38px;
+        top: 18%;
+        left: -20%;
+        animation: drift 95s linear infinite;
+        animation-delay: -20s;
+      }
+      .c2::before {
+        width: 50px;
+        height: 50px;
+        top: -22px;
+        left: 15px;
+      }
+      .c2::after {
+        width: 40px;
+        height: 40px;
+        top: -14px;
+        left: 50px;
+      }
+      .c3 {
+        width: 170px;
+        height: 60px;
+        top: 4%;
+        left: -30%;
+        animation: drift 120s linear infinite;
+        animation-delay: -50s;
+        opacity: 0.6;
+      }
+      .c3::before {
+        width: 85px;
+        height: 85px;
+        top: -38px;
+        left: 25px;
+      }
+      .c3::after {
+        width: 60px;
+        height: 60px;
+        top: -22px;
+        left: 90px;
+      }
+      @keyframes drift {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(140vw);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .cloud,
+        .sun-body,
+        .sun-ring,
+        .sparkle,
+        .dust {
+          animation: none !important;
+        }
+      }
+
+      /* ---------- fairy glitter ---------- */
+      .glitter-layer {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .sparkle {
+        position: absolute;
+        border-radius: 50%;
+        animation: twinkle ease-in-out infinite;
+      }
+      .sparkle::before,
+      .sparkle::after {
+        content: "";
+        position: absolute;
+        background: inherit;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 180%;
+        transform: translate(-50%, -50%) scaleX(0.25);
+        border-radius: 2px;
+      }
+      .sparkle::after {
+        transform: translate(-50%, -50%) scaleX(0.25) rotate(90deg);
+      }
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0.4) rotate(0deg);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1) rotate(45deg);
+        }
+      }
+      .dust {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(0.3px);
+        animation: driftUp linear infinite;
+      }
+      @keyframes driftUp {
+        0% {
+          transform: translate(0, 0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 0.8;
+        }
+        100% {
+          transform: translate(var(--dx, 20px), -110vh);
+          opacity: 0;
+        }
+      }
+
+      /* ---------- stage (hero + calendar together, front and center) ---------- */
+      .stage {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        gap: clamp(26px, 5vh, 56px);
+        padding: 5vh clamp(1.25rem, 5vw, 4rem) 5vh;
+        position: relative;
+      }
+      .stage > .hero {
+        margin-top: auto;
+      }
+      .stage > .day-section {
+        margin-bottom: auto;
+      }
+
+      /* ---------- hero ---------- */
+      .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        padding: 0;
+        position: relative;
+      }
+      .eyebrow {
+        font-family: "Space Mono", monospace;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink);
+        opacity: 0.65;
+        margin-bottom: 14px;
+      }
+      .wordmark {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: clamp(40px, 8vw, 86px);
+        line-height: 0.95;
+        margin: 0;
+        color: var(--ink);
+        text-shadow: 0 3px 0 rgba(255, 255, 255, 0.35);
+      }
+      .sun-stage {
+        margin-top: clamp(14px, 3vh, 32px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .sun-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sun-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 204, 77, 0.35) 0%,
+          rgba(255, 204, 77, 0) 70%
+        );
+        animation: pulse 4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.12);
+        }
+      }
+      .sun-body {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 30%,
+          var(--sun) 0%,
+          var(--sun-edge) 100%
+        );
+        position: relative;
+        animation: bob 5s ease-in-out infinite;
+        box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.25);
+      }
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-6px) rotate(3deg);
+        }
+      }
+      .sun-face {
+        position: absolute;
+        inset: 0;
+      }
+      .sun-face .eye {
+        position: absolute;
+        top: 30px;
+        width: 6px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--ink);
+      }
+      .sun-face .eye.l {
+        left: 22px;
+      }
+      .sun-face .eye.r {
+        right: 22px;
+      }
+      .sun-face .mouth {
+        position: absolute;
+        left: 50%;
+        top: 44px;
+        width: 22px;
+        height: 11px;
+        border: 3px solid var(--ink);
+        border-top: none;
+        border-radius: 0 0 18px 18px;
+        transform: translateX(-50%);
+      }
+      .mood-bubble {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: clamp(22px, 3.6vw, 32px);
+        background: var(--paper);
+        border: 2px solid var(--paper-edge);
+        border-radius: 20px;
+        padding: 10px 26px;
+        box-shadow: 0 6px 0 rgba(43, 51, 82, 0.08);
+        transition:
+          background 0.3s ease,
+          color 0.3s ease,
+          border-color 0.3s ease;
+      }
+      .mood-bubble.state-busy {
+        color: var(--coral-ink);
+        border-color: var(--coral);
+      }
+      .mood-bubble.state-free {
+        color: var(--mint-ink);
+        border-color: var(--mint);
+      }
+      .mood-bubble.state-done {
+        color: var(--ink);
+        border-color: var(--sun-edge);
+      }
+      .mood-sub {
+        font-family: "Space Mono", monospace;
+        font-size: 13px;
+        color: var(--ink-soft);
+        max-width: 320px;
+        text-align: center;
+      }
+      .mood-quote {
+        font-family: "Quicksand", sans-serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 13px;
+        color: var(--ink-soft);
+        max-width: 340px;
+        margin-top: 2px;
+        text-align: center;
+        min-height: 1.4em;
+        transition: opacity 0.3s ease;
+      }
+
+      /* ---------- day section: calendar / pinboard / widgets ---------- */
+      .day-section {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        gap: clamp(20px, 3vw, 40px);
+        flex-wrap: wrap;
+        width: 100%;
+        max-width: 1120px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .calendar-card {
+        flex: 0 1 420px;
+        max-width: 460px;
+        min-width: 270px;
+        background: var(--paper);
+        border: 2px solid var(--paper-edge);
+        border-radius: 22px;
+        padding: 26px 26px 22px;
+        box-shadow: 0 10px 0 rgba(43, 51, 82, 0.08);
+      }
+      .cal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+      .cal-title {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 22px;
+      }
+      .cal-nav {
+        display: flex;
+        gap: 8px;
+      }
+      .cal-nav button {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid var(--paper-edge);
+        background: #fff;
+        color: var(--ink);
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cal-nav button:hover {
+        border-color: var(--sun-edge);
+      }
+      .cal-weekdays,
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+      .cal-weekdays div {
+        text-align: center;
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-soft);
+        padding-bottom: 4px;
+      }
+      .cal-grid {
+        margin-top: 4px;
+      }
+      .cal-day {
+        aspect-ratio: 1;
+        border: none;
+        background: transparent;
+        border-radius: 50%;
+        font-family: "Quicksand", sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--ink);
+        cursor: pointer;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cal-day:hover {
+        background: rgba(255, 204, 77, 0.25);
+      }
+      .cal-day.empty {
+        cursor: default;
+      }
+      .cal-day.empty:hover {
+        background: transparent;
+      }
+      .cal-day.today {
+        background: var(--sun);
+        box-shadow: 0 0 0 3px rgba(255, 169, 63, 0.45);
+      }
+      .cal-day.selected:not(.today) {
+        background: #fff;
+        box-shadow: 0 0 0 2px var(--twine);
+      }
+      .cal-day .dot {
+        position: absolute;
+        bottom: 4px;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--coral);
+      }
+
+      /* pinboard column */
+      .notes-wrap {
+        flex: 0 1 290px;
+        min-width: 240px;
+        max-width: 300px;
+        padding-left: 22px;
+        position: relative;
+      }
+      .notes-wrap::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: repeating-linear-gradient(
+          180deg,
+          var(--twine) 0 6px,
+          transparent 6px 10px
+        );
+      }
+      .notes-heading {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        margin: 0;
+        color: var(--ink-soft);
+      }
+      .note-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .note-card {
+        background: var(--paper);
+        border: 2px solid var(--paper-edge);
+        border-radius: 14px;
+        padding: 10px 30px 10px 14px;
+        position: relative;
+        box-shadow: 0 4px 0 rgba(43, 51, 82, 0.06);
+      }
+      .note-card::before {
+        content: "";
+        position: absolute;
+        left: -19px;
+        top: 16px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--twine);
+      }
+      .note-time {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-soft);
+      }
+      .note-title {
+        font-weight: 600;
+        font-size: 15px;
+        margin-top: 2px;
+      }
+      .note-card.now {
+        border-color: var(--coral);
+      }
+      .note-card.now .note-time {
+        color: var(--coral-ink);
+      }
+      .note-card.past {
+        opacity: 0.5;
+      }
+      .note-card.past .note-title {
+        text-decoration: line-through;
+      }
+      .note-empty {
+        font-family: "Quicksand", sans-serif;
+        font-style: italic;
+        color: var(--ink-soft);
+        padding: 10px 14px;
+      }
+      .note-delete {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: none;
+        background: transparent;
+        color: var(--ink-soft);
+        font-size: 15px;
+        line-height: 1;
+        cursor: pointer;
+      }
+      .note-delete:hover {
+        color: var(--coral-ink);
+      }
+
+      .notes-head-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 0 0 14px 4px;
+      }
+      .add-btn {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        border: 2px solid var(--mint);
+        background: var(--mint);
+        color: var(--mint-ink);
+        border-radius: 10px;
+        padding: 4px 12px;
+        cursor: pointer;
+      }
+      .add-btn:hover {
+        filter: brightness(1.05);
+      }
+      .event-form {
+        display: none;
+        background: #fff;
+        border: 2px dashed var(--paper-edge);
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 12px;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .event-form.open {
+        display: flex;
+      }
+      .event-form input {
+        font-family: "Quicksand", sans-serif;
+        font-size: 13px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 2px solid var(--paper-edge);
+        background: var(--paper);
+        color: var(--ink);
+        width: 100%;
+      }
+      .event-form input:focus {
+        outline: none;
+        border-color: var(--mint);
+      }
+      .event-form .time-row {
+        display: flex;
+        gap: 8px;
+      }
+      .event-form .time-row input {
+        flex: 1;
+      }
+      .event-form .form-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+      }
+      .event-form .form-actions button {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        border-radius: 10px;
+        padding: 6px 14px;
+        cursor: pointer;
+        border: 2px solid var(--paper-edge);
+        background: #fff;
+        color: var(--ink);
+      }
+      .event-form .form-actions button.primary {
+        border-color: var(--mint);
+        background: var(--mint);
+        color: var(--mint-ink);
+      }
+      .form-error {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--coral-ink);
+        min-height: 14px;
+      }
+
+      /* ---------- widgets column: outfit check + spotify + journal ---------- */
+      .widgets-col {
+        flex: 0 1 290px;
+        min-width: 240px;
+        max-width: 300px;
+        padding-left: 22px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .widgets-col::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        background: repeating-linear-gradient(
+          180deg,
+          var(--twine) 0 6px,
+          transparent 6px 10px
+        );
+      }
+      .side-widget {
+        padding-left: 4px;
+      }
+      .widget-label {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin: 0 0 10px 0;
+      }
+
+      /* outfit check */
+      .outfit-card {
+        background: var(--paper);
+        border: 2px solid var(--paper-edge);
+        border-radius: 14px;
+        padding: 12px 14px;
+        box-shadow: 0 4px 0 rgba(43, 51, 82, 0.06);
+      }
+      .outfit-event {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--ink-soft);
+        margin-bottom: 6px;
+      }
+      .outfit-label {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      .outfit-icon {
+        font-size: 20px;
+        line-height: 1;
+      }
+      .outfit-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .outfit-chip {
+        font-family: "Quicksand", sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        background: #fff;
+        border: 2px solid var(--paper-edge);
+        border-radius: 999px;
+        padding: 4px 10px;
+        color: var(--ink);
+      }
+      .outfit-tip {
+        font-family: "Quicksand", sans-serif;
+        font-style: italic;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+      .outfit-empty {
+        font-family: "Quicksand", sans-serif;
+        font-style: italic;
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+
+      /* spotify mini */
+      .spotify-mini {
+        background: var(--paper);
+        border: 2px solid var(--paper-edge);
+        border-radius: 14px;
+        padding: 10px;
+        box-shadow: 0 4px 0 rgba(43, 51, 82, 0.06);
+      }
+      .spotify-mini .music-connect {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .spotify-mini .music-connect input {
+        flex: 1;
+        min-width: 0;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 2px solid var(--paper-edge);
+        background: #fff;
+        font-family: "Quicksand", sans-serif;
+        font-size: 12px;
+        color: var(--ink);
+      }
+      .spotify-mini .music-connect input:focus {
+        outline: none;
+        border-color: var(--mint);
+      }
+      .spotify-mini .music-connect button {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        padding: 0 14px;
+        border-radius: 10px;
+        border: 2px solid var(--mint);
+        background: var(--mint);
+        color: var(--mint-ink);
+        cursor: pointer;
+      }
+      .spotify-mini .music-connect button:hover {
+        filter: brightness(1.05);
+      }
+      .spotify-mini .music-error {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--coral-ink);
+        min-height: 14px;
+        margin-bottom: 6px;
+      }
+      .spotify-mini iframe {
+        border-radius: 10px;
+        border: none;
+        display: block;
+        width: 100%;
+      }
+
+      /* journal */
+      .journal-card {
+        background: var(--paper);
+        border: 2px solid var(--paper-edge);
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 4px 0 rgba(43, 51, 82, 0.06);
+      }
+      .journal-tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .journal-tab {
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 11px;
+        padding: 5px 11px;
+        border-radius: 10px;
+        border: 2px solid var(--paper-edge);
+        background: #fff;
+        color: var(--ink-soft);
+        cursor: pointer;
+      }
+      .journal-tab:hover {
+        border-color: var(--sun-edge);
+      }
+      .journal-tab.active {
+        border-color: var(--sun-edge);
+        background: var(--sun);
+        color: var(--ink);
+      }
+      .journal-textarea {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        font-family: "Quicksand", sans-serif;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--ink);
+        border: 2px solid var(--paper-edge);
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+      }
+      .journal-textarea:focus {
+        outline: none;
+        border-color: var(--mint);
+      }
+      .journal-status {
+        font-family: "Space Mono", monospace;
+        font-size: 10px;
+        color: var(--ink-soft);
+        margin-top: 6px;
+        min-height: 12px;
+      }
+      .journal-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .journal-btn {
+        flex: 1;
+        text-align: center;
+        font-family: "Fredoka", sans-serif;
+        font-weight: 600;
+        font-size: 12px;
+        border-radius: 10px;
+        padding: 7px 10px;
+        cursor: pointer;
+        border: 2px solid var(--mint);
+        background: var(--mint);
+        color: var(--mint-ink);
+      }
+      .journal-btn:hover {
+        filter: brightness(1.05);
+      }
+      .journal-btn.outline {
+        background: #fff;
+        color: var(--ink-soft);
+        border-color: var(--paper-edge);
+      }
+      .journal-btn.outline:hover {
+        border-color: var(--sun-edge);
+      }
+
+      /* short viewports: shrink the hero so the board still gets room */
+      @media (max-height: 760px) {
+        .stage {
+          gap: clamp(18px, 3vh, 28px);
+          padding-top: 3vh;
+        }
+        .wordmark {
+          font-size: clamp(34px, 6vw, 58px);
+        }
+        .sun-wrap {
+          width: 84px;
+          height: 84px;
+        }
+        .sun-body {
+          width: 58px;
+          height: 58px;
+        }
+        .sun-face .eye {
+          top: 22px;
+          width: 5px;
+          height: 6px;
+        }
+        .sun-face .eye.l {
+          left: 16px;
+        }
+        .sun-face .eye.r {
+          right: 16px;
+        }
+        .sun-face .mouth {
+          top: 33px;
+          width: 17px;
+          height: 9px;
+          border-width: 2px;
+        }
+        .sun-stage {
+          gap: 8px;
+        }
+        .mood-bubble {
+          font-size: clamp(19px, 2.8vw, 25px);
+          padding: 7px 20px;
+        }
+      }
+
+      footer {
+        text-align: center;
+        padding: 2vh 6vw 6vh;
+        font-family: "Space Mono", monospace;
+        font-size: 12px;
+        color: var(--ink-soft);
+      }
+
+      /* mid tier: keep calendar + pinboard side by side, drop widgets to their own row */
+      @media (max-width: 999px) {
+        .widgets-col {
+          flex: 1 1 100%;
+          max-width: 740px;
+          padding-left: 0;
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 18px;
+        }
+        .widgets-col::before {
+          display: none;
+        }
+        .widgets-col .side-widget {
+          flex: 1 1 220px;
+          max-width: 320px;
+          padding-left: 0;
+        }
+      }
+      /* narrow: stack everything, still centered */
+      @media (max-width: 819px) {
+        .stage {
+          min-height: auto;
+          justify-content: flex-start;
+          padding-top: 6vh;
+        }
+        .day-section {
+          flex-direction: column;
+          align-items: center;
+        }
+        .calendar-card,
+        .notes-wrap,
+        .widgets-col {
+          flex: 0 1 auto;
+          width: 100%;
+          max-width: 520px;
+          min-width: 0;
+        }
+        .notes-wrap {
+          padding-left: 0;
+        }
+        .notes-wrap::before {
+          display: none;
+        }
+        .note-card::before {
+          display: none;
+        }
+      }
+      @media (max-width: 560px) {
+        .widgets-col {
+          flex-direction: column;
+        }
+        .widgets-col .side-widget {
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sky"></div>
+    <div class="glitter-layer" id="glitterLayer"></div>
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+
+    <div class="stage">
+      <header class="hero">
+        <div class="eyebrow">a little mood board for today</div>
+        <h1 class="wordmark">Perfect Day</h1>
+        <div class="sun-stage">
+          <div class="sun-wrap">
+            <div class="sun-ring"></div>
+            <div class="sun-body">
+              <div class="sun-face">
+                <div class="eye l"></div>
+                <div class="eye r"></div>
+                <div class="mouth"></div>
+              </div>
+            </div>
+          </div>
+          <div id="moodBubble" class="mood-bubble state-free">Yeahhh!!</div>
+          <div id="moodSub" class="mood-sub"></div>
+          <div id="moodQuote" class="mood-quote"></div>
+        </div>
+      </header>
+
+      <section class="day-section">
+        <div class="calendar-card">
+          <div class="cal-head">
+            <div class="cal-title" id="calTitle"></div>
+            <div class="cal-nav">
+              <button id="prevMonth" aria-label="Previous month">
+                &#8249;
+              </button>
+              <button id="nextMonth" aria-label="Next month">&#8250;</button>
+            </div>
+          </div>
+          <div class="cal-weekdays">
+            <div>Su</div>
+            <div>Mo</div>
+            <div>Tu</div>
+            <div>We</div>
+            <div>Th</div>
+            <div>Fr</div>
+            <div>Sa</div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <div class="notes-wrap">
+          <div class="notes-head-row">
+            <div class="notes-heading" id="notesHeading">Today's pinboard</div>
+            <button class="add-btn" id="addEventBtn" type="button">
+              + Add
+            </button>
+          </div>
+          <div class="event-form" id="eventForm">
+            <input
+              type="text"
+              id="eventTitle"
+              placeholder="What's happening?"
+            />
+            <div class="time-row">
+              <input type="time" id="eventStart" aria-label="Start time" />
+              <input type="time" id="eventEnd" aria-label="End time" />
+            </div>
+            <div class="form-error" id="eventFormError"></div>
+            <div class="form-actions">
+              <button type="button" id="cancelEvent">Cancel</button>
+              <button type="button" class="primary" id="saveEvent">Save</button>
+            </div>
+          </div>
+          <div class="note-list" id="noteList"></div>
+        </div>
+
+        <div class="widgets-col">
+          <div class="side-widget">
+            <div class="widget-label">outfit check</div>
+            <div class="outfit-card" id="outfitBody"></div>
+          </div>
+
+          <div class="side-widget">
+            <div class="widget-label">on repeat</div>
+            <div class="spotify-mini">
+              <div class="music-connect">
+                <input
+                  id="spotifyLinkMini"
+                  type="text"
+                  placeholder="Paste a Spotify link"
+                />
+                <button id="loadPlaylistMini" type="button">Go</button>
+              </div>
+              <div id="spotifyErrorMini" class="music-error"></div>
+              <iframe
+                id="spotifyFrameMini"
+                src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0"
+                width="100%"
+                height="80"
+                frameborder="0"
+                allowfullscreen=""
+                allow="
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  fullscreen;
+                  picture-in-picture;
+                "
+                loading="lazy"
+              >
+              </iframe>
+            </div>
+          </div>
+
+          <div class="side-widget">
+            <div class="widget-label">journal</div>
+            <div class="journal-card">
+              <div class="journal-tabs" id="journalTabs">
+                <button
+                  type="button"
+                  class="journal-tab active"
+                  data-tab="morning"
+                >
+                  Morning
+                </button>
+                <button type="button" class="journal-tab" data-tab="evening">
+                  Evening
+                </button>
+                <button type="button" class="journal-tab" data-tab="gratitude">
+                  Gratitude
+                </button>
+              </div>
+              <textarea
+                class="journal-textarea"
+                id="journalTextarea"
+              ></textarea>
+              <div class="journal-actions">
+                <button type="button" class="journal-btn" id="journalSaveBtn">
+                  Save as file
+                </button>
+                <label class="journal-btn outline" for="journalLoadInput"
+                  >Load</label
+                >
+                <input
+                  type="file"
+                  id="journalLoadInput"
+                  accept=".txt"
+                  style="display: none"
+                />
+              </div>
+              <div class="journal-status" id="journalStatus"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>made for the good days &amp; the ordinary ones too</footer>
+
+    <script>
+      (function () {
+        function pad2(n) {
+          return n < 10 ? "0" + n : "" + n;
+        }
+        function dateKey(d) {
+          return (
+            d.getFullYear() +
+            "-" +
+            pad2(d.getMonth() + 1) +
+            "-" +
+            pad2(d.getDate())
+          );
+        }
+
+        function escapeHtml(str) {
+          return String(str).replace(/[&<>"']/g, function (c) {
+            return {
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[c];
+          });
+        }
+
+        function toMinutes(hhmm) {
+          var p = hhmm.split(":");
+          return parseInt(p[0], 10) * 60 + parseInt(p[1], 10);
+        }
+        function fmtTime(hhmm) {
+          var m = toMinutes(hhmm);
+          var h = Math.floor(m / 60),
+            mi = m % 60;
+          var ampm = h >= 12 ? "pm" : "am";
+          var h12 = h % 12;
+          if (h12 === 0) h12 = 12;
+          return h12 + (mi ? ":" + String(mi).padStart(2, "0") : "") + ampm;
+        }
+        function sameDay(a, b) {
+          return (
+            a.getFullYear() === b.getFullYear() &&
+            a.getMonth() === b.getMonth() &&
+            a.getDate() === b.getDate()
+          );
+        }
+
+        var today = new Date();
+        var viewMonth = today.getMonth();
+        var viewYear = today.getFullYear();
+        var selectedDate = new Date(today);
+
+        var SCHEDULE_BY_DATE = {};
+        SCHEDULE_BY_DATE[dateKey(today)] = [
+          { start: "08:00", end: "08:45", title: "Coffee + journal" },
+          { start: "09:30", end: "11:00", title: "Deep work block" },
+          { start: "12:30", end: "13:15", title: "Lunch with a friend" },
+          { start: "15:00", end: "15:30", title: "Team check-in" },
+          { start: "17:00", end: "18:00", title: "Evening walk" },
+        ];
+
+        function getTasks(d) {
+          var key = dateKey(d);
+          if (!SCHEDULE_BY_DATE[key]) SCHEDULE_BY_DATE[key] = [];
+          return SCHEDULE_BY_DATE[key];
+        }
+        function sortTasks(arr) {
+          arr.sort(function (a, b) {
+            return toMinutes(a.start) - toMinutes(b.start);
+          });
+        }
+
+        var monthNames = [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ];
+
+        function renderCalendar() {
+          document.getElementById("calTitle").textContent =
+            monthNames[viewMonth] + " " + viewYear;
+          var grid = document.getElementById("calGrid");
+          grid.innerHTML = "";
+          var firstDay = new Date(viewYear, viewMonth, 1).getDay();
+          var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+          for (var i = 0; i < firstDay; i++) {
+            var empty = document.createElement("div");
+            empty.className = "cal-day empty";
+            grid.appendChild(empty);
+          }
+          for (var d = 1; d <= daysInMonth; d++) {
+            var cellDate = new Date(viewYear, viewMonth, d);
+            var btn = document.createElement("button");
+            btn.className = "cal-day";
+            btn.textContent = d;
+            if (sameDay(cellDate, today)) {
+              btn.classList.add("today");
+            }
+            if (sameDay(cellDate, selectedDate)) {
+              btn.classList.add("selected");
+            }
+            var cellTasks = SCHEDULE_BY_DATE[dateKey(cellDate)];
+            if (cellTasks && cellTasks.length) {
+              var dot = document.createElement("span");
+              dot.className = "dot";
+              btn.appendChild(dot);
+            }
+            (function (dt) {
+              btn.addEventListener("click", function () {
+                selectedDate = dt;
+                renderCalendar();
+                renderNotes();
+                renderOutfit();
+              });
+            })(cellDate);
+            grid.appendChild(btn);
+          }
+        }
+
+        function renderNotes() {
+          var heading = document.getElementById("notesHeading");
+          var list = document.getElementById("noteList");
+          list.innerHTML = "";
+          var isToday = sameDay(selectedDate, today);
+          heading.textContent = isToday
+            ? "Today's pinboard"
+            : selectedDate.toLocaleDateString(undefined, {
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+              });
+
+          var tasks = getTasks(selectedDate);
+          sortTasks(tasks);
+
+          if (tasks.length === 0) {
+            var empty = document.createElement("div");
+            empty.className = "note-empty";
+            empty.textContent =
+              "Nothing pinned here yet — a blank page waiting for you.";
+            list.appendChild(empty);
+            return;
+          }
+
+          var rightNow = new Date();
+          var nowMin = rightNow.getHours() * 60 + rightNow.getMinutes();
+          tasks.forEach(function (item) {
+            var s = toMinutes(item.start),
+              e = toMinutes(item.end);
+            var card = document.createElement("div");
+            card.className = "note-card";
+            if (isToday) {
+              if (nowMin >= s && nowMin < e) card.classList.add("now");
+              else if (nowMin >= e) card.classList.add("past");
+            }
+            card.innerHTML =
+              '<div class="note-time">' +
+              fmtTime(item.start) +
+              " &ndash; " +
+              fmtTime(item.end) +
+              "</div>" +
+              '<div class="note-title">' +
+              escapeHtml(item.title) +
+              "</div>";
+            var delBtn = document.createElement("button");
+            delBtn.className = "note-delete";
+            delBtn.type = "button";
+            delBtn.setAttribute("aria-label", "Delete this event");
+            delBtn.textContent = "\u00d7";
+            delBtn.addEventListener("click", function () {
+              var arr = getTasks(selectedDate);
+              var idx = arr.indexOf(item);
+              if (idx > -1) arr.splice(idx, 1);
+              renderNotes();
+              renderCalendar();
+              renderOutfit();
+              if (sameDay(selectedDate, today)) {
+                updateMood();
+              }
+            });
+            card.appendChild(delBtn);
+            list.appendChild(card);
+          });
+        }
+
+        /* ---------- mood + motivating quote ---------- */
+        var MOOD_QUOTES = {
+          busy: [
+            "One thing at a time — you're exactly where you need to be.",
+            "Small steady steps still cross the whole day.",
+            "Heads down, heart calm — this part won't last forever.",
+            "You don't have to feel ready. Just begin.",
+            "Focus is just love for the next five minutes.",
+          ],
+          free: [
+            "Open space is not empty — it's possibility.",
+            "A quiet hour is still a full hour.",
+            "Rest counts as progress too.",
+            "Nothing scheduled, everything possible.",
+            "Breathe. This gap is yours.",
+          ],
+          done: [
+            "Look at that — a whole day, lived on purpose.",
+            "You showed up. That's the whole game.",
+            "Close it out gently. Tomorrow can wait.",
+            "Every box checked is a small kind of magic.",
+            "Well done today. Truly.",
+          ],
+        };
+        var lastMoodState = null;
+        var lastMoodQuote = "";
+
+        function updateMood() {
+          var now = new Date();
+          var nowMin = now.getHours() * 60 + now.getMinutes();
+          var bubble = document.getElementById("moodBubble");
+          var sub = document.getElementById("moodSub");
+          var quoteEl = document.getElementById("moodQuote");
+
+          var tasks = getTasks(today);
+          sortTasks(tasks);
+
+          var current = null,
+            next = null;
+          for (var i = 0; i < tasks.length; i++) {
+            var s = toMinutes(tasks[i].start),
+              e = toMinutes(tasks[i].end);
+            if (nowMin >= s && nowMin < e) {
+              current = tasks[i];
+              break;
+            }
+            if (nowMin < s) {
+              next = tasks[i];
+              break;
+            }
+          }
+
+          bubble.classList.remove("state-busy", "state-free", "state-done");
+          var stateKey;
+
+          if (current) {
+            bubble.textContent = current.title;
+            bubble.classList.add("state-busy");
+            sub.textContent = "wrapping up at " + fmtTime(current.end);
+            stateKey = "busy";
+          } else if (next) {
+            bubble.textContent = "Yeahhh!!";
+            bubble.classList.add("state-free");
+            sub.textContent =
+              "free until " +
+              fmtTime(next.start) +
+              " — " +
+              next.title +
+              " next";
+            stateKey = "free";
+          } else if (tasks.length > 0) {
+            bubble.textContent = "Perfect Day";
+            bubble.classList.add("state-done");
+            sub.textContent =
+              "every task and event today is done — the rest is yours";
+            stateKey = "done";
+          } else {
+            bubble.textContent = "Yeahhh!!";
+            bubble.classList.add("state-free");
+            sub.textContent = "wide open — nothing on the books yet";
+            stateKey = "free";
+          }
+
+          if (stateKey !== lastMoodState) {
+            lastMoodState = stateKey;
+            var pool = MOOD_QUOTES[stateKey];
+            lastMoodQuote = pool[Math.floor(Math.random() * pool.length)];
+          }
+          quoteEl.textContent = lastMoodQuote;
+        }
+
+        /* ---------- outfit check (looks at what's coming up today) ---------- */
+        var OUTFIT_RULES = [
+          {
+            keywords: ["walk", "run", "hike", "gym", "workout", "yoga", "jog"],
+            icon: "\uD83D\uDC5F",
+            label: "Athletic & easy",
+            items: ["Sneakers", "Leggings or shorts", "Breathable top"],
+          },
+          {
+            keywords: [
+              "meeting",
+              "call",
+              "work",
+              "interview",
+              "presentation",
+              "standup",
+              "check-in",
+            ],
+            icon: "\uD83D\uDC54",
+            label: "Smart casual",
+            items: [
+              "Collared shirt",
+              "Tailored trousers",
+              "Clean sneakers or loafers",
+            ],
+          },
+          {
+            keywords: ["lunch", "dinner", "date", "coffee", "brunch"],
+            icon: "\uD83D\uDC57",
+            label: "Casual chic",
+            items: ["Nice top", "Jeans or a skirt", "A layer you can shed"],
+          },
+          {
+            keywords: ["party", "wedding", "event", "celebration"],
+            icon: "\u2728",
+            label: "Dress to impress",
+            items: ["Statement outfit", "Your good shoes", "A bit of sparkle"],
+          },
+        ];
+        var OUTFIT_DEFAULT = {
+          icon: "\uD83C\uDF24",
+          label: "Comfy everyday",
+          items: [
+            "Whatever feels good",
+            "A layer for later",
+            "Your favorite shoes",
+          ],
+        };
+
+        function findOutfitRule(title) {
+          var t = title.toLowerCase();
+          for (var i = 0; i < OUTFIT_RULES.length; i++) {
+            var r = OUTFIT_RULES[i];
+            for (var j = 0; j < r.keywords.length; j++) {
+              if (t.indexOf(r.keywords[j]) > -1) return r;
+            }
+          }
+          return OUTFIT_DEFAULT;
+        }
+
+        function renderOutfit() {
+          var body = document.getElementById("outfitBody");
+          var tasks = getTasks(selectedDate);
+          sortTasks(tasks);
+
+          var isToday = sameDay(selectedDate, today);
+          var isPastDay = !isToday && dateKey(selectedDate) < dateKey(today);
+
+          if (isPastDay) {
+            body.innerHTML =
+              '<div class="outfit-empty">That day has already passed.</div>';
+            return;
+          }
+
+          var upcoming = null;
+          if (isToday) {
+            var now = new Date();
+            var nowMin = now.getHours() * 60 + now.getMinutes();
+            for (var i = 0; i < tasks.length; i++) {
+              var e = toMinutes(tasks[i].end);
+              if (nowMin < e) {
+                upcoming = tasks[i];
+                break;
+              }
+            }
+          } else {
+            upcoming = tasks.length ? tasks[0] : null;
+          }
+
+          if (!upcoming) {
+            body.innerHTML =
+              '<div class="outfit-empty">Nothing on the horizon — dress for whatever feels right.</div>';
+            return;
+          }
+
+          var rule = findOutfitRule(upcoming.title);
+          var startMin = toMinutes(upcoming.start);
+          var tip =
+            startMin < 540 || startMin >= 1080
+              ? "It's an early or late one — bring a layer."
+              : "Should be comfortable at that hour.";
+
+          var whenLabel = isToday
+            ? fmtTime(upcoming.start)
+            : selectedDate.toLocaleDateString(undefined, { weekday: "short" }) +
+              " " +
+              fmtTime(upcoming.start);
+
+          var chipsHtml = rule.items
+            .map(function (it) {
+              return '<span class="outfit-chip">' + it + "</span>";
+            })
+            .join("");
+
+          body.innerHTML =
+            '<div class="outfit-event">' +
+            whenLabel +
+            " &middot; " +
+            escapeHtml(upcoming.title) +
+            "</div>" +
+            '<div class="outfit-label"><span class="outfit-icon">' +
+            rule.icon +
+            "</span>" +
+            rule.label +
+            "</div>" +
+            '<div class="outfit-chips">' +
+            chipsHtml +
+            "</div>" +
+            '<div class="outfit-tip">' +
+            tip +
+            "</div>";
+        }
+
+        document
+          .getElementById("prevMonth")
+          .addEventListener("click", function () {
+            viewMonth--;
+            if (viewMonth < 0) {
+              viewMonth = 11;
+              viewYear--;
+            }
+            renderCalendar();
+          });
+        document
+          .getElementById("nextMonth")
+          .addEventListener("click", function () {
+            viewMonth++;
+            if (viewMonth > 11) {
+              viewMonth = 0;
+              viewYear++;
+            }
+            renderCalendar();
+          });
+
+        var eventForm = document.getElementById("eventForm");
+        var eventTitleInput = document.getElementById("eventTitle");
+        var eventStartInput = document.getElementById("eventStart");
+        var eventEndInput = document.getElementById("eventEnd");
+        var eventFormError = document.getElementById("eventFormError");
+
+        function closeEventForm() {
+          eventForm.classList.remove("open");
+          eventTitleInput.value = "";
+          eventStartInput.value = "";
+          eventEndInput.value = "";
+          eventFormError.textContent = "";
+        }
+
+        document
+          .getElementById("addEventBtn")
+          .addEventListener("click", function () {
+            if (eventForm.classList.contains("open")) {
+              closeEventForm();
+            } else {
+              eventForm.classList.add("open");
+              eventTitleInput.focus();
+            }
+          });
+        document
+          .getElementById("cancelEvent")
+          .addEventListener("click", closeEventForm);
+
+        document
+          .getElementById("saveEvent")
+          .addEventListener("click", function () {
+            var title = eventTitleInput.value.trim();
+            var start = eventStartInput.value;
+            var end = eventEndInput.value;
+            eventFormError.textContent = "";
+
+            if (!title) {
+              eventFormError.textContent = "Give it a name first.";
+              return;
+            }
+            if (!start || !end) {
+              eventFormError.textContent = "Pick a start and end time.";
+              return;
+            }
+            if (toMinutes(start) >= toMinutes(end)) {
+              eventFormError.textContent =
+                "End time should be after the start time.";
+              return;
+            }
+
+            var tasks = getTasks(selectedDate);
+            tasks.push({ start: start, end: end, title: title });
+            sortTasks(tasks);
+
+            closeEventForm();
+            renderNotes();
+            renderCalendar();
+            renderOutfit();
+            if (sameDay(selectedDate, today)) {
+              updateMood();
+            }
+          });
+
+        function refreshToday() {
+          var now = new Date();
+          if (sameDay(now, today)) return false;
+          var wasOnToday = sameDay(selectedDate, today);
+          today = now;
+          if (wasOnToday) selectedDate = new Date(now);
+          viewMonth = now.getMonth();
+          viewYear = now.getFullYear();
+          return true;
+        }
+
+        renderCalendar();
+        renderNotes();
+        updateMood();
+        renderOutfit();
+        setInterval(function () {
+          if (refreshToday()) renderCalendar();
+          updateMood();
+          renderNotes();
+          renderOutfit();
+        }, 30000);
+
+        /* ---------- fairy glitter ---------- */
+        var glitterColors = [
+          "var(--glitter-gold)",
+          "var(--glitter-pink)",
+          "var(--glitter-white)",
+        ];
+        var layer = document.getElementById("glitterLayer");
+        var sparkleCount = window.innerWidth < 700 ? 26 : 46;
+        for (var i = 0; i < sparkleCount; i++) {
+          var s = document.createElement("div");
+          s.className = "sparkle";
+          var size = 3 + Math.random() * 5;
+          s.style.width = size + "px";
+          s.style.height = size + "px";
+          s.style.left = Math.random() * 98 + "vw";
+          s.style.top = Math.random() * 98 + "vh";
+          s.style.background =
+            glitterColors[Math.floor(Math.random() * glitterColors.length)];
+          s.style.animationDuration = 2 + Math.random() * 3 + "s";
+          s.style.animationDelay = Math.random() * 4 + "s";
+          layer.appendChild(s);
+        }
+        var dustCount = window.innerWidth < 700 ? 10 : 18;
+        for (var j = 0; j < dustCount; j++) {
+          var d = document.createElement("div");
+          d.className = "dust";
+          var dsize = 2 + Math.random() * 3;
+          d.style.width = dsize + "px";
+          d.style.height = dsize + "px";
+          d.style.left = Math.random() * 98 + "vw";
+          d.style.top = 60 + Math.random() * 40 + "vh";
+          d.style.background =
+            glitterColors[Math.floor(Math.random() * glitterColors.length)];
+          d.style.setProperty("--dx", Math.random() * 60 - 30 + "px");
+          d.style.animationDuration = 8 + Math.random() * 10 + "s";
+          d.style.animationDelay = Math.random() * 10 + "s";
+          layer.appendChild(d);
+        }
+
+        /* ---------- connect a Spotify link (mini widget) ---------- */
+        function parseSpotifyUrl(url) {
+          var match = url.match(
+            /open\.spotify\.com\/(playlist|album|track|artist|show|episode)\/([a-zA-Z0-9]+)/,
+          );
+          if (!match) return null;
+          return { type: match[1], id: match[2] };
+        }
+        document
+          .getElementById("loadPlaylistMini")
+          .addEventListener("click", function () {
+            var input = document.getElementById("spotifyLinkMini");
+            var errorEl = document.getElementById("spotifyErrorMini");
+            var url = input.value.trim();
+            errorEl.textContent = "";
+            if (!url) {
+              errorEl.textContent = "Paste a Spotify link first.";
+              return;
+            }
+            var parsed = parseSpotifyUrl(url);
+            if (!parsed) {
+              errorEl.textContent = "That doesn't look like a Spotify link.";
+              return;
+            }
+            var frame = document.getElementById("spotifyFrameMini");
+            frame.src =
+              "https://open.spotify.com/embed/" +
+              parsed.type +
+              "/" +
+              parsed.id +
+              "?utm_source=generator&theme=0";
+          });
+        document
+          .getElementById("spotifyLinkMini")
+          .addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+              document.getElementById("loadPlaylistMini").click();
+            }
+          });
+
+        /* ---------- journal tabs (in-memory for this session) ---------- */
+        var journalEntries = { morning: "", evening: "", gratitude: "" };
+        var journalPlaceholders = {
+          morning: "What's the plan? How do you want today to feel?",
+          evening: "How did today actually go?",
+          gratitude: "Three small good things from today...",
+        };
+        var activeJournalTab = "morning";
+        var journalTextarea = document.getElementById("journalTextarea");
+        var journalStatus = document.getElementById("journalStatus");
+        var journalStatusTimer = null;
+
+        function renderJournalTab() {
+          document.querySelectorAll(".journal-tab").forEach(function (btn) {
+            btn.classList.toggle(
+              "active",
+              btn.dataset.tab === activeJournalTab,
+            );
+          });
+          journalTextarea.value = journalEntries[activeJournalTab];
+          journalTextarea.placeholder = journalPlaceholders[activeJournalTab];
+        }
+
+        document.querySelectorAll(".journal-tab").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            activeJournalTab = btn.dataset.tab;
+            renderJournalTab();
+          });
+        });
+
+        function flashJournalStatus(msg) {
+          journalStatus.textContent = msg;
+          clearTimeout(journalStatusTimer);
+          journalStatusTimer = setTimeout(function () {
+            journalStatus.textContent = "";
+          }, 2500);
+        }
+
+        journalTextarea.addEventListener("input", function (e) {
+          journalEntries[activeJournalTab] = e.target.value;
+          flashJournalStatus("saved for this session");
+        });
+
+        /* Save as file / Load — these buttons existed but were never wired up. */
+        var JOURNAL_TABS = ["morning", "evening", "gratitude"];
+        function tabHeading(tab) {
+          return "== " + tab.charAt(0).toUpperCase() + tab.slice(1) + " ==";
+        }
+
+        document
+          .getElementById("journalSaveBtn")
+          .addEventListener("click", function () {
+            var hasText = JOURNAL_TABS.some(function (tab) {
+              return journalEntries[tab].trim() !== "";
+            });
+            if (!hasText) {
+              flashJournalStatus("nothing written yet");
+              return;
+            }
+            var text = JOURNAL_TABS.map(function (tab) {
+              return tabHeading(tab) + "\n" + journalEntries[tab].trim();
+            }).join("\n\n");
+
+            var blob = new Blob([text + "\n"], {
+              type: "text/plain;charset=utf-8",
+            });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "journal-" + dateKey(selectedDate) + ".txt";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function () {
+              URL.revokeObjectURL(url);
+            }, 1000);
+            flashJournalStatus("downloaded");
+          });
+
+        var journalLoadInput = document.getElementById("journalLoadInput");
+        journalLoadInput.addEventListener("change", function () {
+          var file = journalLoadInput.files && journalLoadInput.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            var text = String(reader.result).replace(/\r\n/g, "\n");
+            var found = false;
+            var parsed = { morning: "", evening: "", gratitude: "" };
+            var currentTab = null;
+            text.split("\n").forEach(function (line) {
+              var matchedTab = null;
+              JOURNAL_TABS.forEach(function (tab) {
+                if (line.trim() === tabHeading(tab)) matchedTab = tab;
+              });
+              if (matchedTab) {
+                currentTab = matchedTab;
+                found = true;
+              } else if (currentTab) {
+                parsed[currentTab] += line + "\n";
+              }
+            });
+            JOURNAL_TABS.forEach(function (tab) {
+              parsed[tab] = parsed[tab].trim();
+            });
+            if (found) {
+              journalEntries = parsed;
+              flashJournalStatus("loaded " + file.name);
+            } else {
+              /* Not one of our exports — drop the whole file into the open tab. */
+              journalEntries[activeJournalTab] = text.trim();
+              flashJournalStatus("loaded into " + activeJournalTab);
+            }
+            renderJournalTab();
+          };
+          reader.onerror = function () {
+            flashJournalStatus("could not read that file");
+          };
+          reader.readAsText(file);
+          journalLoadInput.value = "";
+        });
+
+        renderJournalTab();
+      })();
+    </script>
+  </body>
+</html>
